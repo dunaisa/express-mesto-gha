@@ -1,25 +1,25 @@
-{
+module.exports = {
   "env": {
     "es2021": true,
-      "node": true
+    "node": true
   },
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:react/jsx-runtime"
   ],
-    "overrides": [],
-      "parserOptions": {
+  "overrides": [],
+  "parserOptions": {
     "ecmaVersion": "latest",
-      "sourceType": "module",
-        "ecmaFeatures": {
+    "sourceType": "module",
+    "ecmaFeatures": {
       "jsx": true
     }
   },
   "plugins": [
     "react"
   ],
-    "rules": {
+  "rules": {
     "no-underscore-dangle": [
       "error",
       {
