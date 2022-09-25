@@ -32,12 +32,19 @@ const createUser = (req, res) => {
 //Возвращает пользователя по id
 const findUser = (req, res) => {
   User.findById(req.params.userId)
+    .orFail(new ObjectNotFound('Пользователь не найден.'))
     .then(user => res.send({ data: user }))
-    .catch(() => {
-      if (req.params.userId) {
-        console.log(req.params.userId)
+    .catch((errors) => {
+      if (errors.name === 'ObjectIdIsNotFound') {
         const UserNotFound = new ObjectNotFound('Пользователь не найден.')
         return res.status(UserNotFound.status).send({ message: UserNotFound.message })
+      } else if (errors.name === 'ValidationError') {
+        const IncorrectInputValue = new ValidationError(`Переданы некорректные данные.`)
+        return res.status(IncorrectInputValue.status).send({ message: IncorrectInputValue.message })
+
+      } else if (errors.name === 'CastError') {
+        const UserIdNotValid = new ValidationError(`${req.params.userId} не является валидным идентификатором пользователя.`)
+        return res.status(UserIdNotValid.status).send({ message: UserIdNotValid.message })
       } else {
         const ServerErr = new ServerError('Произошла ошибка.')
         return res.status(ServerErr.status).send({ message: 'Произошла ошибка' });
