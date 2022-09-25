@@ -9,8 +9,7 @@ module.exports = {
     "plugin:react/recommended",
     "plugin:react/jsx-runtime"
   ],
-  "overrides": [
-  ],
+  "overrides": [],
   "parserOptions": {
     "ecmaVersion": "latest",
     "sourceType": "module",
@@ -24,7 +23,11 @@ module.exports = {
   "rules": {
     "no-underscore-dangle": [
       "error",
-      { "allow": ["_id"] }
+      {
+        "allow": [
+          "_id"
+        ]
+      }
     ]
   }
 }
