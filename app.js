@@ -22,10 +22,10 @@ app.use('/', require('./routes/users'));
 app.use('/', require('./routes/cards'));
 
 app.use('/*', (req, res) => {
-  res.status(404).send({ message: 'Запрашиваемый путь не существует.' })
+  res.status(404).send({ message: 'Запрашиваемый путь не существует.' });
 });
 
 app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает
-  console.log(`App listening on port ${PORT}`)
-})
+  console.log(`App listening on port ${PORT}`);
+});

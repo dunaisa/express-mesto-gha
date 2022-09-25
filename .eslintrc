@@ -4,6 +4,7 @@
     "node": true
   },
   "extends": [
+    "airbnb-base",
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:react/jsx-runtime"
@@ -20,6 +21,29 @@
     "react"
   ],
   "rules": {
+    "max-classes-per-file": [
+      "error",
+      {
+        "ignoreExpressions": true,
+        "max": 4
+      }
+    ],
+    "max-len": [
+      "error",
+      {
+        "code": 130
+      }
+    ],
+    "comma-dangle": [
+      "error",
+      "never"
+    ],
+    "no-else-return": [
+      "error",
+      {
+        "allowElseIf": true
+      }
+    ],
     "no-underscore-dangle": [
       "error",
       {

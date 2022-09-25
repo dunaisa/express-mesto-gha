@@ -5,7 +5,7 @@ const SERVER_ERROR = 500;
 class ValidationError extends Error {
   constructor(message) {
     super(message);
-    this.name = "ValidationError";
+    this.name = 'ValidationError';
     this.status = BAD_REQUEST;
   }
 }
@@ -13,7 +13,7 @@ class ValidationError extends Error {
 class ObjectNotFound extends Error {
   constructor(message) {
     super(message);
-    this.name = "ObjectIdIsNotFound";
+    this.name = 'ObjectIdIsNotFound';
     this.status = NOT_FOUND;
   }
 }
@@ -21,7 +21,7 @@ class ObjectNotFound extends Error {
 class ServerError extends Error {
   constructor(message) {
     super(message);
-    this.name = "ServerError";
+    this.name = 'ServerError';
     this.status = SERVER_ERROR;
   }
 }
@@ -31,5 +31,3 @@ module.exports = {
   ObjectNotFound,
   ServerError
 };
-
-//`Переданы некорректные данные. ${errors._message}`
