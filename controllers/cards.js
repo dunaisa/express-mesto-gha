@@ -1,10 +1,13 @@
 const Card = require('../models/card');
 const {
-  ObjectNotFound,
   NOT_FOUND,
   SERVER_ERROR,
   BAD_REQUEST,
 } = require('../Components/HttpError');
+
+const {
+  ObjectNotFound,
+} = require('../Components/ObjectNotFound');
 
 // Возвращает все карточки
 const getCards = (req, res) => {
@@ -43,6 +46,7 @@ const deleteCard = (req, res) => {
 };
 
 // Поставить лайк карточке
+
 const likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
@@ -63,6 +67,7 @@ const likeCard = (req, res) => {
 };
 
 // Убрать лайк с карточки
+
 const dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
