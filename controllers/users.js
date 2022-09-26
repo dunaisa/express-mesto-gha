@@ -1,13 +1,13 @@
 const User = require('../models/user');
-const { ValidationError, ObjectNotFound, ServerError } = require('../Components/HttpError');
+const { NOT_FOUND, SERVER_ERROR, BAD_REQUEST } = require('../Components/HttpError');
+const { ObjectNotFound } = require('../Components/ObjectNotFound');
 
 // Возвращает всех пользователей
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch(() => {
-      const ServerErr = new ServerError('Произошла ошибка.');
-      return res.status(ServerErr.status).send({ message: 'Произошла ошибка' });
+      return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -19,11 +19,9 @@ const createUser = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((errors) => {
       if (errors.name === 'ValidationError') {
-        const IncorrectInputValue = new ValidationError('Переданы некорректные данные.');
-        return res.status(IncorrectInputValue.status).send({ message: IncorrectInputValue.message });
+        return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные.' });
       }
-      const ServerErr = new ServerError('Произошла ошибка.');
-      return res.status(ServerErr.status).send({ message: 'Произошла ошибка' });
+      return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -34,17 +32,12 @@ const findUser = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((errors) => {
       if (errors.name === 'ObjectIdIsNotFound') {
-        const UserNotFound = new ObjectNotFound('Пользователь не найден.');
-        return res.status(UserNotFound.status).send({ message: UserNotFound.message });
-      } if (errors.name === 'ValidationError') {
-        const IncorrectInputValue = new ValidationError('Переданы некорректные данные.');
-        return res.status(IncorrectInputValue.status).send({ message: IncorrectInputValue.message });
-      } if (errors.name === 'CastError') {
-        const UserIdNotValid = new ValidationError(`${req.params.userId} не является валидным идентификатором пользователя.`);
-        return res.status(UserIdNotValid.status).send({ message: UserIdNotValid.message });
+        return res.status(NOT_FOUND).send({ message: errors.message });
+      } else if (errors.name === 'CastError') {
+        return res.status(BAD_REQUEST).send({ message: `${req.params.userId} не является валидным идентификатором пользователя.` });
+      } else {
+        return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
-      const ServerErr = new ServerError('Произошла ошибка.');
-      return res.status(ServerErr.status).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -57,17 +50,14 @@ const updateUserInfo = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((errors) => {
       if (errors.name === 'ObjectIdIsNotFound') {
-        const UserNotFound = new ObjectNotFound('Пользователь не найден.');
-        return res.status(UserNotFound.status).send({ message: UserNotFound.message });
-      } if (errors.name === 'ValidationError') {
-        const IncorrectInputValue = new ValidationError('Переданы некорректные данные.');
-        return res.status(IncorrectInputValue.status).send({ message: IncorrectInputValue.message });
-      } if (errors.name === 'CastError') {
-        const UserIdNotValid = new ValidationError(`${req.user._id} не является валидным идентификатором пользователя.`);
-        return res.status(UserIdNotValid.status).send({ message: UserIdNotValid.message });
+        return res.status(NOT_FOUND).send({ message: errors.message });
+      } else if (errors.name === 'ValidationError') {
+        return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные.' });
+      } else if (errors.name === 'CastError') {
+        return res.status(BAD_REQUEST).send({ message: `${req.user._id} не является валидным идентификатором пользователя.` });
+      } else {
+        return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
-      const ServerErr = new ServerError('Произошла ошибка.');
-      return res.status(ServerErr.status).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -79,17 +69,14 @@ const updateUserAvatar = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((errors) => {
       if (errors.name === 'ObjectIdIsNotFound') {
-        const UserNotFound = new ObjectNotFound('Пользователь не найден.');
-        return res.status(UserNotFound.status).send({ message: UserNotFound.message });
-      } if (errors.name === 'ValidationError') {
-        const IncorrectInputValue = new ValidationError('Переданы некорректные данные.');
-        return res.status(IncorrectInputValue.status).send({ message: IncorrectInputValue.message });
-      } if (errors.name === 'CastError') {
-        const UserIdNotValid = new ValidationError(`${req.user._id} не является валидным идентификатором пользователя.`);
-        return res.status(UserIdNotValid.status).send({ message: UserIdNotValid.message });
+        return res.status(NOT_FOUND).send({ message: erros.message });
+      } else if (errors.name === 'ValidationError') {
+        return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные.' });
+      } else if (errors.name === 'CastError') {
+        return res.status(BAD_REQUEST).send({ message: `${req.user._id} не является валидным идентификатором пользователя.` });
+      } else {
+        return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
-      const ServerErr = new ServerError('Произошла ошибка.');
-      return res.status(ServerErr.status).send({ message: 'Произошла ошибка' });
     });
 };
 
