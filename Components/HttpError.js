@@ -5,5 +5,5 @@ const SERVER_ERROR = 500;
 module.exports = {
   BAD_REQUEST,
   NOT_FOUND,
-  SERVER_ERROR
+  SERVER_ERROR,
 };

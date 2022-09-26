@@ -1,4 +1,4 @@
-const { NOT_FOUND } = require('../Components/HttpError');
+const { NOT_FOUND } = require('./HttpError');
 
 class ObjectNotFound extends Error {
   constructor(message) {
@@ -9,5 +9,5 @@ class ObjectNotFound extends Error {
 }
 
 module.exports = {
-  ObjectNotFound
+  ObjectNotFound,
 };

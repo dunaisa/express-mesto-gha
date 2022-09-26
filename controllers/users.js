@@ -6,9 +6,7 @@ const { ObjectNotFound } = require('../Components/ObjectNotFound');
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch(() => {
-      return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
-    });
+    .catch(() => res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' }));
 };
 
 // Создает пользователя
@@ -33,11 +31,10 @@ const findUser = (req, res) => {
     .catch((errors) => {
       if (errors.name === 'ObjectIdIsNotFound') {
         return res.status(NOT_FOUND).send({ message: errors.message });
-      } else if (errors.name === 'CastError') {
+      } if (errors.name === 'CastError') {
         return res.status(BAD_REQUEST).send({ message: `${req.params.userId} не является валидным идентификатором пользователя.` });
-      } else {
-        return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
+      return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -51,13 +48,12 @@ const updateUserInfo = (req, res) => {
     .catch((errors) => {
       if (errors.name === 'ObjectIdIsNotFound') {
         return res.status(NOT_FOUND).send({ message: errors.message });
-      } else if (errors.name === 'ValidationError') {
+      } if (errors.name === 'ValidationError') {
         return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные.' });
-      } else if (errors.name === 'CastError') {
+      } if (errors.name === 'CastError') {
         return res.status(BAD_REQUEST).send({ message: `${req.user._id} не является валидным идентификатором пользователя.` });
-      } else {
-        return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
+      return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -69,14 +65,13 @@ const updateUserAvatar = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((errors) => {
       if (errors.name === 'ObjectIdIsNotFound') {
-        return res.status(NOT_FOUND).send({ message: erros.message });
-      } else if (errors.name === 'ValidationError') {
+        return res.status(NOT_FOUND).send({ message: errors.message });
+      } if (errors.name === 'ValidationError') {
         return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные.' });
-      } else if (errors.name === 'CastError') {
+      } if (errors.name === 'CastError') {
         return res.status(BAD_REQUEST).send({ message: `${req.user._id} не является валидным идентификатором пользователя.` });
-      } else {
-        return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
+      return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -85,5 +80,5 @@ module.exports = {
   createUser,
   findUser,
   updateUserInfo,
-  updateUserAvatar
+  updateUserAvatar,
 };
