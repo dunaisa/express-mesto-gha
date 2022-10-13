@@ -25,6 +25,11 @@ app.use('/*', (req, res) => {
   res.status(404).send({ message: 'Запрашиваемый путь не существует.' });
 });
 
+app.use((err, req, res, next) => {
+  // это обработчик ошибки
+  res.status(err.statusCode).send({ message: err.message });
+});
+
 app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает
   console.log(`App listening on port ${PORT}`);
