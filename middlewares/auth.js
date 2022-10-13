@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-module.exports = (req, res, next) => {
+const auth = (req, res, next) => {
   // тут будет вся авторизация
   const { authorization } = req.headers;
 
@@ -21,5 +21,9 @@ module.exports = (req, res, next) => {
 
   req.user = payload; // записываем пейлоуд в объект запроса
 
-  next();
+  return next();
+};
+
+module.exports = {
+  auth,
 };

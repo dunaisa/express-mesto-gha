@@ -13,9 +13,8 @@ const getUsers = (req, res) => {
 
 // Создает пользователя
 const createUser = (req, res) => {
-
   bcrypt.hash(req.body.password, 10)
-    .then(hash => User.create({ email: req.body.email, password: hash, }))
+    .then((hash) => User.create({ email: req.body.email, password: hash }))
     .then((user) => res.send({ data: user }))
     .catch((errors) => {
       if (errors.name === 'ValidationError') {
@@ -43,7 +42,6 @@ const findUser = (req, res) => {
 // Обновляет профиль
 const updateUserInfo = (req, res) => {
   const { name, about } = req.body;
-
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .orFail(new ObjectNotFound('Пользователь не найден.'))
     .then((user) => res.send({ data: user }))
@@ -81,7 +79,6 @@ const updateUserAvatar = (req, res) => {
 
 const login = (req, res) => {
   const { email, password } = req.body;
-
   User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
@@ -96,16 +93,16 @@ const login = (req, res) => {
     .then((matched) => {
       if (!matched) {
         // хеши не совпали — отклоняем промис
-        return Promise.reject(new Error('Неправильные почта или пароль'));
+        return new Error('Неправильные почта или пароль');
       }
       // аутентификация успешна
-      res.send({ message: 'Всё верно!' });
+      return res.send({ message: 'Всё верно!' });
     })
     .catch((err) => {
       // возвращаем ошибку аутентификации
       res.status(401).send({ message: err.message });
     });
-}
+};
 
 module.exports = {
   getUsers,
