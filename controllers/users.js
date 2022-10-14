@@ -31,12 +31,13 @@ const createUser = (req, res, next) => {
         .then((hash) => User.create({
           name, about, avatar, email, password: hash,
         }))
-        .then((user) => res.send({ data: user }))
+        .then((user) => res.send({ email: user.email, password: user.password, }))
         .catch((errors) => {
-          console.log(errors)
-          if (errors.name === 'ValidationError') {
-            return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные.' });
-          }
+          // console.log(errors)
+          // if (errors.name === 'ValidationError') {
+          //   return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные.' });
+          // }
+          res.status(400).send(errors);
         });
     })
 };
