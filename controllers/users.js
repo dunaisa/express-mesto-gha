@@ -15,9 +15,9 @@ const getUsers = (req, res) => {
 };
 
 // Создает пользователя
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const { name, about, avatar, email, password } = req.body;
-
+  console.log(req.body)
   if (!email || !password) {
     return res.status(BAD_REQUEST).send({ message: 'Логин или пароль не может быть пустым.' });
   }
@@ -33,10 +33,10 @@ const createUser = (req, res) => {
         }))
         .then((user) => res.send({ data: user }))
         .catch((errors) => {
+          console.log(errors)
           if (errors.name === 'ValidationError') {
             return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные.' });
           }
-          return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
         });
     })
 };

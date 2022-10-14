@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const { celebrate, Joi } = require('celebrate');
+const { celebrate, Joi, errors } = require('celebrate');
 
 const {
   createUser,
@@ -33,9 +33,9 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
-    name: Joi.string().required().min(2).max(30),
-    about: Joi.string().required().min(2).max(30),
-    avatar: Joi.string().required().min(2),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string(),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
   }),
@@ -47,6 +47,8 @@ app.use(auth);
 
 app.use('/', require('./routes/users'));
 app.use('/', require('./routes/cards'));
+
+app.use(errors());
 
 app.use((err, req, res, next) => {
   // если у ошибки нет статуса, выставляем 500
