@@ -79,7 +79,10 @@ const updateUserAvatar = (req, res) => {
 
 const login = (req, res) => {
   const { email, password } = req.body;
-  User.findOne({ email }).select('+password')
+  if (!email || !password) {
+    return res.status(BAD_REQUEST).send({ message: 'Логин или пароль не может быть пустым.' });
+  }
+  return User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
         // пользователь с такой почтой не найден
@@ -93,7 +96,8 @@ const login = (req, res) => {
     .then((matched) => {
       if (!matched) {
         // хеши не совпали — отклоняем промис
-        return new Error('Неправильные почта или пароль');
+        return res.send({ message: 'Всё неверно!' });
+        // new Error('Неправильные почта или пароль');
       }
       // аутентификация успешна
       return res.send({ message: 'Всё верно!' });
