@@ -16,19 +16,29 @@ const getUsers = (req, res) => {
 
 // Создает пользователя
 const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
+  const { name, about, avatar, email, password } = req.body;
 
-  bcrypt.hash(req.body.password, 10)
-    .then((hash) => User.create({
-      name, about, avatar, email: req.body.email, password: hash,
-    }))
-    .then((user) => res.send({ data: user }))
-    .catch((errors) => {
-      if (errors.name === 'ValidationError') {
-        return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные.' });
+  if (!email || !password) {
+    return res.status(BAD_REQUEST).send({ message: 'Логин или пароль не может быть пустым.' });
+  }
+
+  return User.findOne({ email })
+    .then((user) => {
+      if (user) {
+        return res.status(403).send({ message: 'Пользователь с такой почтой уже существует.' });
       }
-      return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
-    });
+      bcrypt.hash(req.body.password, 10)
+        .then((hash) => User.create({
+          name, about, avatar, email, password: hash,
+        }))
+        .then((user) => res.send({ data: user }))
+        .catch((errors) => {
+          if (errors.name === 'ValidationError') {
+            return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные.' });
+          }
+          return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
+        });
+    })
 };
 
 // Возвращает пользователя по id
@@ -85,10 +95,7 @@ const updateUserAvatar = (req, res) => {
 // Проверяет соответсвие логина
 
 const login = (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    return res.status(BAD_REQUEST).send({ message: 'Логин или пароль не может быть пустым.' });
-  }
+
   return User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
