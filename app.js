@@ -1,8 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const { auth } = require('./middlewares/auth');
 const { celebrate, Joi } = require('celebrate');
+const { auth } = require('./middlewares/auth');
 
 const {
   createUser,
