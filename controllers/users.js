@@ -9,9 +9,6 @@ const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch((errors) => {
-      if (errors.name === 'ValidationError') {
-        return res.status(401).send({ message: 'Переданы некорректные данные.' });
-      }
       return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
     });
   // .catch(() => res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' }));
