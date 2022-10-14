@@ -22,7 +22,6 @@ const userSchema = new mongoose.Schema(
         validator: function (v) {
           return /^(https?:\/\/)?([\w-]{1,32}\.[\w-]{1,32})[^\s@]*$/gm.test(v);
         },
-        message: "Ссылка не является валидной!",
       },
     },
     email: {

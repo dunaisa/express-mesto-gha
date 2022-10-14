@@ -17,10 +17,6 @@ const getUsers = (req, res) => {
 // Создает пользователя
 const createUser = (req, res, next) => {
   const { name, about, avatar, email, password } = req.body;
-  console.log(req.body)
-  if (!email || !password) {
-    return res.status(BAD_REQUEST).send({ message: 'Логин или пароль не может быть пустым.' });
-  }
 
   return User.findOne({ email })
     .then((user) => {
@@ -32,13 +28,13 @@ const createUser = (req, res, next) => {
           name, about, avatar, email, password: hash,
         }))
         .then((user) => res.send({ email: user.email, password: user.password, }))
-        .catch((errors) => {
-          // console.log(errors)
-          // if (errors.name === 'ValidationError') {
-          //   return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные.' });
-          // }
-          res.status(400).send(errors);
-        });
+        // .catch((errors) => {
+        //   console.log(errors)
+        //   if (errors.name === 'ValidationError') {
+        //     return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные.' });
+        //   }
+        // });
+        .catch(next);
     })
 };
 
