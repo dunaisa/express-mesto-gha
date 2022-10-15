@@ -32,15 +32,13 @@ const createUser = (req, res, next) => {
       if (user) {
         return res.status(409).send({ message: 'Пользователь с такой почтой уже существует.' });
       }
-      bcrypt.hash(password, 10)
+      return bcrypt.hash(password, 10)
         .then((hash) => User.create({
           name, about, avatar, email, password: hash,
         }))
-        .then(() => res.send(user));
-
-      return next();
-    });
-  // .catch(next);
+        .then(() => res.status(200).send({ message: 'Пользователь успешно зарегистрирован.' }));
+    })
+    .catch(next);
 };
 
 // Возвращает пользователя по id
