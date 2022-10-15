@@ -42,7 +42,7 @@ const deleteCard = (req, res, next) => {
       if (card) {
         if (card.owner.toString() === ownerId) {
           card.delete()
-            .then((card) => res.send({ data: card }))
+            .then(() => res.send({ data: card }));
         } else {
           next(new ForbiddenError(`Карточка с указанным id ${req.params.cardId} принадлежит другому пользователю.`));
         }
@@ -50,11 +50,11 @@ const deleteCard = (req, res, next) => {
     })
     .catch((errors) => {
       if (errors.name === 'CastError') {
-        throw new BadRequest(`${req.params.cardId} не является валидным идентификатором карточки.`)
+        throw new BadRequest(`${req.params.cardId} не является валидным идентификатором карточки.`);
       } else {
         return next();
       }
-    })
+    });
 };
 
 // Поставить лайк карточке
@@ -70,11 +70,11 @@ const likeCard = (req, res, next) => {
     .then((card) => res.send({ data: card }))
     .catch((errors) => {
       if (errors.name === 'CastError') {
-        throw new BadRequest(`${req.params.cardId} не является валидным идентификатором карточки.`)
+        throw new BadRequest(`${req.params.cardId} не является валидным идентификатором карточки.`);
       } else {
         return next();
       }
-    })
+    });
   // .catch(next);
 };
 
@@ -91,11 +91,11 @@ const dislikeCard = (req, res, next) => {
     .then((card) => res.send({ data: card }))
     .catch((errors) => {
       if (errors.name === 'CastError') {
-        throw new BadRequest(`${req.params.cardId} не является валидным идентификатором карточки.`)
+        throw new BadRequest(`${req.params.cardId} не является валидным идентификатором карточки.`);
       } else {
         return next();
       }
-    })
+    });
   // .catch(next);
 };
 
