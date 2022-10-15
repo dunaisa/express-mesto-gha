@@ -1,5 +1,5 @@
-
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const { NOT_FOUND, SERVER_ERROR, BAD_REQUEST } = require('../Components/HttpError');
 const { ObjectNotFound } = require('../Components/ObjectNotFound');
