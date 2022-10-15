@@ -5,6 +5,14 @@ const {
 } = require('../Components/HttpError');
 
 const {
+  ForbiddenError,
+} = require('../Components/ForbiddenError');
+
+const {
+  BadRequest,
+} = require('../Components/BadRequest');
+
+const {
   ObjectNotFound,
 } = require('../Components/ObjectNotFound');
 
@@ -36,19 +44,22 @@ const deleteCard = (req, res, next) => {
   const ownerId = req.user._id;
 
   Card.findById(req.params.cardId)
-    .orFail(new ObjectNotFound('Карточка не найдена.'))
+    .orFail(new ObjectNotFound(`Карточка с указанным id ${req.params.cardId} не найдена.`))
     .then((card) => {
-      if (card.owner.toString() !== ownerId) {
-        return res.status(403).send({ message: `Карточка с указанным id ${req.params.cardId} принадлежит другому пользователю.` });
+      if (card) {
+        if (card.owner.toString() !== ownerId) {
+          // return res.status(403).send({ message: `Карточка с указанным id ${req.params.cardId} принадлежит другому пользователю.` });
+          throw new ForbiddenError(`Карточка с указанным id ${req.params.cardId} принадлежит другому пользователю.`);
+        }
+      } else {
+        card.delete();
+        return res.send({ data: card });
       }
-      card.delete();
-      return res.send({ data: card });
     })
     .catch((errors) => {
-      if (errors.name === 'ObjectIdIsNotFound') {
-        return res.status(NOT_FOUND).send({ message: `Карточка с указанным id ${req.params.cardId} не найдена.` });
-      } if (errors.name === 'CastError') {
-        return res.status(BAD_REQUEST).send({ message: `${req.params.cardId} не является валидным идентификатором карточки.` });
+      if (errors.name === 'CastError') {
+        // return res.status(BAD_REQUEST).send({ message: `${req.params.cardId} не является валидным идентификатором карточки.` });
+        next(new BadRequest(`${req.params.cardId} не является валидным идентификатором карточки.`))
       }
       // return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
       return false;

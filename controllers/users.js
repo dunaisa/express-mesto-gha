@@ -8,10 +8,6 @@ const { ObjectNotFound } = require('../Components/ObjectNotFound');
 const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    // .catch((errors) => {
-    //   return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
-    // });
-    // .catch(() => res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' }));
     .catch(next);
 };
 
@@ -33,16 +29,10 @@ const createUser = (req, res, next) => {
       bcrypt.hash(password, 10)
         .then((hash) => User.create({
           name, about, avatar, email, password: hash,
-        }));
-      return res.send({ data: user })
-        // .catch((errors) => {
-        //   console.log(errors)
-        //   if (errors.name === 'ValidationError') {
-        //     return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные.' });
-        //   }
-        // });
-        .catch(next);
-    });
+        }))
+        .then((user) => res.send(user));
+    })
+    .catch(next);
 };
 
 // Возвращает пользователя по id
