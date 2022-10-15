@@ -1,7 +1,6 @@
 const Card = require('../models/card');
 const {
   NOT_FOUND,
-  SERVER_ERROR,
   BAD_REQUEST,
 } = require('../Components/HttpError');
 
@@ -23,12 +22,12 @@ const createCard = (req, res, next) => {
   const { _id } = req.user;
   Card.create({ name, link, owner: _id })
     .then((card) => res.send({ data: card }))
-    .catch((errors) => {
-      if (errors.name === 'ValidationError') {
-        return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные.' });
-      }
-      // return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
-    })
+    // .catch((errors) => {
+    //   if (errors.name === 'ValidationError') {
+    //     return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные.' });
+    //   }
+    //   // return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
+    // })
     .catch(next);
 };
 
@@ -43,7 +42,7 @@ const deleteCard = (req, res, next) => {
         return res.status(403).send({ message: `Карточка с указанным id ${req.params.cardId} принадлежит другому пользователю.` });
       }
       card.delete();
-      return res.send({ data: card })
+      return res.send({ data: card });
     })
     .catch((errors) => {
       if (errors.name === 'ObjectIdIsNotFound') {
@@ -52,6 +51,7 @@ const deleteCard = (req, res, next) => {
         return res.status(BAD_REQUEST).send({ message: `${req.params.cardId} не является валидным идентификатором карточки.` });
       }
       // return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
+      return false;
     })
     .catch(next);
 };
@@ -74,8 +74,9 @@ const likeCard = (req, res, next) => {
         return res.status(BAD_REQUEST).send({ message: `${req.params.cardId} не является валидным идентификатором карточки.` });
       }
       // return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
+      return false;
     })
-    .catch(next)
+    .catch(next);
 };
 
 // Убрать лайк с карточки
@@ -96,8 +97,9 @@ const dislikeCard = (req, res, next) => {
         return res.status(BAD_REQUEST).send({ message: `${req.params.cardId} не является валидным идентификатором пользователя.` });
       }
       // return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
+      return false;
     })
-    .catch(next)
+    .catch(next);
 };
 
 module.exports = {

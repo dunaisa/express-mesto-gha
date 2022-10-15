@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
-const { NOT_FOUND, SERVER_ERROR, BAD_REQUEST } = require('../Components/HttpError');
+const { NOT_FOUND, BAD_REQUEST } = require('../Components/HttpError');
 const { ObjectNotFound } = require('../Components/ObjectNotFound');
 
 // Возвращает всех пользователей
@@ -17,7 +17,13 @@ const getUsers = (req, res, next) => {
 
 // Создает пользователя
 const createUser = (req, res, next) => {
-  const { name, about, avatar, email, password } = req.body;
+  const {
+    name,
+    about,
+    avatar,
+    email,
+    password,
+  } = req.body;
 
   return User.findOne({ email })
     .then((user) => {
