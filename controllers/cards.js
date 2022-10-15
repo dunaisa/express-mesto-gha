@@ -47,24 +47,22 @@ const deleteCard = (req, res, next) => {
     .orFail(new ObjectNotFound(`Карточка с указанным id ${req.params.cardId} не найдена.`))
     .then((card) => {
       if (card) {
-        if (card.owner.toString() !== ownerId) {
-          // return res.status(403).send({ message: `Карточка с указанным id ${req.params.cardId} принадлежит другому пользователю.` });
-          throw new ForbiddenError(`Карточка с указанным id ${req.params.cardId} принадлежит другому пользователю.`);
+        if (card.owner.toString() === ownerId) {
+          card.delete()
+            .then((card) => res.send({ data: card }))
+        } else {
+          next(new ForbiddenError(`Карточка с указанным id ${req.params.cardId} принадлежит другому пользователю.`));
         }
-      } else {
-        card.delete();
-        return res.send({ data: card });
       }
     })
     .catch((errors) => {
       if (errors.name === 'CastError') {
-        // return res.status(BAD_REQUEST).send({ message: `${req.params.cardId} не является валидным идентификатором карточки.` });
-        next(new BadRequest(`${req.params.cardId} не является валидным идентификатором карточки.`))
+        throw new BadRequest(`${req.params.cardId} не является валидным идентификатором карточки.`)
+      } else {
+        next();
       }
-      // return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
-      return false;
     })
-    .catch(next);
+  // .catch(next);
 };
 
 // Поставить лайк карточке
