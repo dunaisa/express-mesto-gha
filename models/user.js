@@ -41,7 +41,7 @@ const userSchema = new mongoose.Schema(
     },
   },
   {
-    versionKey: false,
+    toObject: { useProjection: true }, toJSON: { useProjection: true }, versionKey: false,
   },
 );
 
