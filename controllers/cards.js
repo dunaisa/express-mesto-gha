@@ -10,14 +10,15 @@ const {
 } = require('../Components/ObjectNotFound');
 
 // Возвращает все карточки
-const getCards = (req, res) => {
+const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch(() => res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' }));
+    // .catch(() => res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' }));
+    .catch(next);
 };
 
 // Создает карточку
-const createCard = (req, res) => {
+const createCard = (req, res, next) => {
   const { name, link } = req.body;
   const { _id } = req.user;
   Card.create({ name, link, owner: _id })
@@ -26,8 +27,9 @@ const createCard = (req, res) => {
       if (errors.name === 'ValidationError') {
         return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные.' });
       }
-      return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
-    });
+      // return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
+    })
+    .catch(next);
 };
 
 // Удаление карточки по id

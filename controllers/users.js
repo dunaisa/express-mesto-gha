@@ -8,10 +8,11 @@ const { ObjectNotFound } = require('../Components/ObjectNotFound');
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch((errors) => {
-      return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
-    });
-  // .catch(() => res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' }));
+    // .catch((errors) => {
+    //   return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
+    // });
+    // .catch(() => res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' }));
+    .catch(next);
 };
 
 // Создает пользователя
@@ -58,7 +59,7 @@ const findUser = (req, res, next) => {
 };
 
 // Обновляет профиль
-const updateUserInfo = (req, res) => {
+const updateUserInfo = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .orFail(new ObjectNotFound('Пользователь не найден.'))
@@ -71,12 +72,13 @@ const updateUserInfo = (req, res) => {
       } if (errors.name === 'CastError') {
         return res.status(BAD_REQUEST).send({ message: `${req.user._id} не является валидным идентификатором пользователя.` });
       }
-      return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
-    });
+      // return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
+    })
+    .catch(next);
 };
 
 // Обновляет аватар
-const updateUserAvatar = (req, res) => {
+const updateUserAvatar = (req, res, next) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .orFail(new ObjectNotFound('Пользователь не найден.'))
@@ -89,13 +91,14 @@ const updateUserAvatar = (req, res) => {
       } if (errors.name === 'CastError') {
         return res.status(BAD_REQUEST).send({ message: `${req.user._id} не является валидным идентификатором пользователя.` });
       }
-      return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
-    });
+      // return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
+    })
+    .catch(next);
 };
 
 // Проверяет соответсвие логина
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
@@ -108,7 +111,8 @@ const login = (req, res) => {
     })
     .catch((err) => {
       res.status(401).send({ message: err.message });
-    });
+    })
+    .catch(next);
 };
 
 // Получает информацию о текущем пользователе
