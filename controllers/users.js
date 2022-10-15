@@ -22,7 +22,6 @@ const createUser = (req, res, next) => {
     about,
     avatar,
     email,
-    password,
   } = req.body;
 
   return User.findOne({ email })
@@ -33,8 +32,8 @@ const createUser = (req, res, next) => {
       bcrypt.hash(req.body.password, 10)
         .then((hash) => User.create({
           name, about, avatar, email, password: hash,
-        }))
-        .then((user) => res.send({ data: user }))
+        }));
+      return res.send({ data: user })
         // .catch((errors) => {
         //   console.log(errors)
         //   if (errors.name === 'ValidationError') {
@@ -42,12 +41,11 @@ const createUser = (req, res, next) => {
         //   }
         // });
         .catch(next);
-    })
+    });
 };
 
 // Возвращает пользователя по id
 const findUser = (req, res, next) => {
-
   User.findById(req.params.userId)
     .orFail(new ObjectNotFound('Пользователь не найден.'))
     .then((user) => res.send({ data: user }))
@@ -57,9 +55,9 @@ const findUser = (req, res, next) => {
       }
       if (errors.name === 'CastError') {
         return res.status(BAD_REQUEST).send({ message: `${req.params.userId} не является валидным идентификатором пользователя.` });
-
       }
       // return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
+      return false;
     })
     .catch(next);
 };
@@ -79,6 +77,7 @@ const updateUserInfo = (req, res, next) => {
         return res.status(BAD_REQUEST).send({ message: `${req.user._id} не является валидным идентификатором пользователя.` });
       }
       // return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
+      return false;
     })
     .catch(next);
 };
@@ -98,6 +97,7 @@ const updateUserAvatar = (req, res, next) => {
         return res.status(BAD_REQUEST).send({ message: `${req.user._id} не является валидным идентификатором пользователя.` });
       }
       // return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
+      return false;
     })
     .catch(next);
 };
@@ -109,9 +109,7 @@ const login = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-
       const token = jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' });
-
       // вернём токен
       res.send({ token });
     })
@@ -124,28 +122,11 @@ const login = (req, res, next) => {
 // Получает информацию о текущем пользователе
 
 const getCurrentUser = (req, res, next) => {
-  console.log(req.user._id)
-
-  return User.findById(req.user._id)
+  User.findById(req.user._id)
     .orFail(new ObjectNotFound('Пользователь не найден.'))
     .then((user) => res.send({ data: user }))
-    .catch(next)
-}
-
-// const getCurrentUser = (req, res) => {
-//   console.log(req.user._id)
-//   User.findById(req.user._id)
-//     .orFail(new ObjectNotFound('Пользователь не найден.'))
-//     .then((user) => res.send({ data: user }))
-//     .catch((errors) => {
-//       if (errors.name === 'ObjectIdIsNotFound') {
-//         return res.status(NOT_FOUND).send({ message: errors.message });
-//       } if (errors.name === 'CastError') {
-//         return res.status(BAD_REQUEST).send({ message: `${req.params.userId} не является валидным идентификатором пользователя.` });
-//       }
-//       return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
-//     });
-// };
+    .catch(next);
+};
 
 module.exports = {
   getUsers,
