@@ -39,19 +39,22 @@ const createUser = (req, res, next) => {
 };
 
 // Возвращает пользователя по id
-const findUser = (req, res) => {
-  console.log(req.params.userId)
+const findUser = (req, res, next) => {
+
   User.findById(req.params.userId)
     .orFail(new ObjectNotFound('Пользователь не найден.'))
     .then((user) => res.send({ data: user }))
     .catch((errors) => {
       if (errors.name === 'ObjectIdIsNotFound') {
         return res.status(NOT_FOUND).send({ message: errors.message });
-      } if (errors.name === 'CastError') {
-        return res.status(BAD_REQUEST).send({ message: `${req.params.userId} не является валидным идентификатором пользователя.` });
       }
-      return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
-    });
+      if (errors.name === 'CastError') {
+        return res.status(BAD_REQUEST).send({ message: `${req.params.userId} не является валидным идентификатором пользователя.` });
+
+      }
+      // return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
+    })
+    .catch(next);
 };
 
 // Обновляет профиль
