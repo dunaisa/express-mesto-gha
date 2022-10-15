@@ -5,7 +5,7 @@ const { NOT_FOUND, SERVER_ERROR, BAD_REQUEST } = require('../Components/HttpErro
 const { ObjectNotFound } = require('../Components/ObjectNotFound');
 
 // Возвращает всех пользователей
-const getUsers = (req, res) => {
+const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
     // .catch((errors) => {
