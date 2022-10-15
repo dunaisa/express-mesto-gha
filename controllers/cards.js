@@ -20,7 +20,6 @@ const {
 const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    // .catch(() => res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' }));
     .catch(next);
 };
 
@@ -30,12 +29,6 @@ const createCard = (req, res, next) => {
   const { _id } = req.user;
   Card.create({ name, link, owner: _id })
     .then((card) => res.send({ data: card }))
-    // .catch((errors) => {
-    //   if (errors.name === 'ValidationError') {
-    //     return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные.' });
-    //   }
-    //   // return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
-    // })
     .catch(next);
 };
 
@@ -59,10 +52,9 @@ const deleteCard = (req, res, next) => {
       if (errors.name === 'CastError') {
         throw new BadRequest(`${req.params.cardId} не является валидным идентификатором карточки.`)
       } else {
-        next();
+        return next();
       }
     })
-  // .catch(next);
 };
 
 // Поставить лайк карточке
@@ -77,15 +69,13 @@ const likeCard = (req, res, next) => {
     .orFail(new ObjectNotFound('Передан несуществующий id карточки.'))
     .then((card) => res.send({ data: card }))
     .catch((errors) => {
-      if (errors.name === 'ObjectIdIsNotFound') {
-        return res.status(NOT_FOUND).send({ message: 'Передан несуществующий id карточки.' });
-      } if (errors.name === 'CastError') {
-        return res.status(BAD_REQUEST).send({ message: `${req.params.cardId} не является валидным идентификатором карточки.` });
+      if (errors.name === 'CastError') {
+        throw new BadRequest(`${req.params.cardId} не является валидным идентификатором карточки.`)
+      } else {
+        return next();
       }
-      // return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
-      return false;
     })
-    .catch(next);
+  // .catch(next);
 };
 
 // Убрать лайк с карточки
@@ -100,15 +90,13 @@ const dislikeCard = (req, res, next) => {
     .orFail(new ObjectNotFound('Передан несуществующий id карточки.'))
     .then((card) => res.send({ data: card }))
     .catch((errors) => {
-      if (errors.name === 'ObjectIdIsNotFound') {
-        return res.status(NOT_FOUND).send({ message: 'Передан несуществующий id карточки.' });
-      } if (errors.name === 'CastError') {
-        return res.status(BAD_REQUEST).send({ message: `${req.params.cardId} не является валидным идентификатором пользователя.` });
+      if (errors.name === 'CastError') {
+        throw new BadRequest(`${req.params.cardId} не является валидным идентификатором карточки.`)
+      } else {
+        return next();
       }
-      // return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
-      return false;
     })
-    .catch(next);
+  // .catch(next);
 };
 
 module.exports = {
