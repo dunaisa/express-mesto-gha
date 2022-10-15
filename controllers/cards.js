@@ -31,7 +31,7 @@ const createCard = (req, res) => {
 };
 
 // Удаление карточки по id
-const deleteCard = (req, res) => {
+const deleteCard = (req, res, next) => {
   Card.findByIdAndRemove(req.params.cardId)
     .orFail(new ObjectNotFound('Карточка не найдена.'))
     .then((card) => res.send({ data: card }))
@@ -41,13 +41,14 @@ const deleteCard = (req, res) => {
       } if (errors.name === 'CastError') {
         return res.status(BAD_REQUEST).send({ message: `${req.params.cardId} не является валидным идентификатором карточки.` });
       }
-      return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
-    });
+      // return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
+    })
+    .catch(next);
 };
 
 // Поставить лайк карточке
 
-const likeCard = (req, res) => {
+const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     // добавить _id в массив, если его там нет
@@ -62,8 +63,9 @@ const likeCard = (req, res) => {
       } if (errors.name === 'CastError') {
         return res.status(BAD_REQUEST).send({ message: `${req.params.cardId} не является валидным идентификатором карточки.` });
       }
-      return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
-    });
+      // return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
+    })
+    .catch(next)
 };
 
 // Убрать лайк с карточки
