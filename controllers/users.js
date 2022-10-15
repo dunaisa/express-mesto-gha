@@ -39,19 +39,20 @@ const createUser = (req, res, next) => {
 };
 
 // Возвращает пользователя по id
-const findUser = (req, res) => {
-  User.findById(req.params.userId)
-    .orFail(new ObjectNotFound('Пользователь не найден.'))
-    .then((user) => res.send({ data: user }))
-    .catch((errors) => {
-      if (errors.name === 'ObjectIdIsNotFound') {
-        return res.status(NOT_FOUND).send({ message: errors.message });
-      } if (errors.name === 'CastError') {
-        return res.status(BAD_REQUEST).send({ message: `${req.params.userId} не является валидным идентификатором пользователя.` });
-      }
-      return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
-    });
-};
+// const findUser = (req, res) => {
+//   console.log(req.params.userId)
+//   User.findById(req.params.userId)
+//     .orFail(new ObjectNotFound('Пользователь не найден.'))
+//     .then((user) => res.send({ data: user }))
+//     .catch((errors) => {
+//       if (errors.name === 'ObjectIdIsNotFound') {
+//         return res.status(NOT_FOUND).send({ message: errors.message });
+//       } if (errors.name === 'CastError') {
+//         return res.status(BAD_REQUEST).send({ message: `${req.params.userId} не является валидным идентификатором пользователя.` });
+//       }
+//       return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
+//     });
+// };
 
 // Обновляет профиль
 const updateUserInfo = (req, res) => {
@@ -107,11 +108,38 @@ const login = (req, res) => {
     });
 };
 
+// Получает информацию о текущем пользователе
+
+// const getCurrentUser = (req, res, next) => {
+//   console.log(req.user._id)
+
+//   return User.findById(req.user._id)
+//     .orFail(new ObjectNotFound('Пользователь не найден.'))
+//     .then((user) => res.send({ data: user }))
+//     .catch(next)
+// }
+
+const getCurrentUser = (req, res) => {
+  console.log(req.user._id)
+  User.findById(req.user._id)
+    .orFail(new ObjectNotFound('Пользователь не найден.'))
+    .then((user) => res.send({ data: user }))
+    .catch((errors) => {
+      if (errors.name === 'ObjectIdIsNotFound') {
+        return res.status(NOT_FOUND).send({ message: errors.message });
+      } if (errors.name === 'CastError') {
+        return res.status(BAD_REQUEST).send({ message: `${req.params.userId} не является валидным идентификатором пользователя.` });
+      }
+      return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
+    });
+};
+
 module.exports = {
   getUsers,
   createUser,
   login,
-  findUser,
+  // findUser,
   updateUserInfo,
   updateUserAvatar,
+  getCurrentUser,
 };
