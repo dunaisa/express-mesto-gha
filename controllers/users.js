@@ -2,7 +2,18 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const { NOT_FOUND, BAD_REQUEST } = require('../Components/HttpError');
-const { ObjectNotFound } = require('../Components/ObjectNotFound');
+
+const {
+  ForbiddenError,
+} = require('../Components/ForbiddenError');
+
+const {
+  BadRequest,
+} = require('../Components/BadRequest');
+
+const {
+  ObjectNotFound,
+} = require('../Components/ObjectNotFound');
 
 // Возвращает всех пользователей
 const getUsers = (req, res, next) => {
@@ -41,16 +52,12 @@ const findUser = (req, res, next) => {
     .orFail(new ObjectNotFound('Пользователь не найден.'))
     .then((user) => res.send({ data: user }))
     .catch((errors) => {
-      if (errors.name === 'ObjectIdIsNotFound') {
-        return res.status(NOT_FOUND).send({ message: errors.message });
-      }
       if (errors.name === 'CastError') {
-        return res.status(BAD_REQUEST).send({ message: `${req.params.userId} не является валидным идентификатором пользователя.` });
+        throw new BadRequest(`${req.params.userId} не является валидным идентификатором пользователя.`)
+      } else {
+        return next();
       }
-      // return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
-      return false;
     })
-    .catch(next);
 };
 
 // Обновляет профиль
@@ -60,17 +67,14 @@ const updateUserInfo = (req, res, next) => {
     .orFail(new ObjectNotFound('Пользователь не найден.'))
     .then((user) => res.send({ data: user }))
     .catch((errors) => {
-      if (errors.name === 'ObjectIdIsNotFound') {
-        return res.status(NOT_FOUND).send({ message: errors.message });
-      } if (errors.name === 'ValidationError') {
-        return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные.' });
-      } if (errors.name === 'CastError') {
-        return res.status(BAD_REQUEST).send({ message: `${req.user._id} не является валидным идентификатором пользователя.` });
+      if (errors.name === 'ValidationError') {
+        next(new BadRequest('Переданы некорректные данные.'))
       }
-      // return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
-      return false;
+      if (errors.name === 'CastError') {
+        next(new BadRequest(`${req.params.userId} не является валидным идентификатором пользователя.`))
+      }
+      return next();
     })
-    .catch(next);
 };
 
 // Обновляет аватар
@@ -80,17 +84,14 @@ const updateUserAvatar = (req, res, next) => {
     .orFail(new ObjectNotFound('Пользователь не найден.'))
     .then((user) => res.send({ data: user }))
     .catch((errors) => {
-      if (errors.name === 'ObjectIdIsNotFound') {
-        return res.status(NOT_FOUND).send({ message: errors.message });
-      } if (errors.name === 'ValidationError') {
-        return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные.' });
-      } if (errors.name === 'CastError') {
-        return res.status(BAD_REQUEST).send({ message: `${req.user._id} не является валидным идентификатором пользователя.` });
+      if (errors.name === 'ValidationError') {
+        next(new BadRequest('Переданы некорректные данные.'))
       }
-      // return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
-      return false;
+      if (errors.name === 'CastError') {
+        next(new BadRequest(`${req.params.userId} не является валидным идентификатором пользователя.`))
+      }
+      return next();
     })
-    .catch(next);
 };
 
 // Проверяет соответсвие логина

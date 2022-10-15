@@ -1,8 +1,8 @@
 const Card = require('../models/card');
-const {
-  NOT_FOUND,
-  BAD_REQUEST,
-} = require('../Components/HttpError');
+// const {
+//   NOT_FOUND,
+//   BAD_REQUEST,
+// } = require('../Components/HttpError');
 
 const {
   ForbiddenError,
