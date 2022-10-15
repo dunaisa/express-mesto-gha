@@ -70,7 +70,7 @@ const likeCard = (req, res, next) => {
 
 // Убрать лайк с карточки
 
-const dislikeCard = (req, res) => {
+const dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     // убрать _id из массива
@@ -85,8 +85,9 @@ const dislikeCard = (req, res) => {
       } if (errors.name === 'CastError') {
         return res.status(BAD_REQUEST).send({ message: `${req.params.cardId} не является валидным идентификатором пользователя.` });
       }
-      return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
-    });
+      // return res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
+    })
+    .catch(next)
 };
 
 module.exports = {

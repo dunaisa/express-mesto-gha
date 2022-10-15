@@ -20,7 +20,7 @@ router.post('/cards', celebrate({
 
 router.delete('/cards/:cardId', celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().required().length(24),
+    cardId: Joi.string().required().length(24),
   }).unknown(true),
 }), deleteCard);
 
@@ -32,7 +32,7 @@ router.put('/cards/:cardId/likes', celebrate({
 
 router.delete('/cards/:cardId/likes', celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().required().length(24),
+    cardId: Joi.string().required().length(24),
   }).unknown(true),
 }), dislikeCard);
 
