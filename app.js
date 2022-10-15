@@ -26,11 +26,6 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 //   next();
 // });
 
-
-app.use('/*', (req, res) => {
-  res.status(404).send({ message: 'Запрашиваемый путь не существует.' });
-});
-
 app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
@@ -67,6 +62,10 @@ app.use((err, req, res, next) => {
   });
 
   next();
+});
+
+app.use('/*', (req, res) => {
+  res.status(404).send({ message: 'Запрашиваемый путь не существует.' });
 });
 
 app.listen(PORT, () => {
