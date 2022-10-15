@@ -32,9 +32,17 @@ const createCard = (req, res) => {
 
 // Удаление карточки по id
 const deleteCard = (req, res, next) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  const ownerId = req.user._id;
+
+  Card.findById(req.params.cardId)
     .orFail(new ObjectNotFound('Карточка не найдена.'))
-    .then((card) => res.send({ data: card }))
+    .then((card) => {
+      if (card.owner.toString() !== ownerId) {
+        return res.status(403).send({ message: `Карточка с указанным id ${req.params.cardId} принадлежит другому пользователю.` });
+      }
+      card.delete();
+      return res.send({ data: card })
+    })
     .catch((errors) => {
       if (errors.name === 'ObjectIdIsNotFound') {
         return res.status(NOT_FOUND).send({ message: `Карточка с указанным id ${req.params.cardId} не найдена.` });
