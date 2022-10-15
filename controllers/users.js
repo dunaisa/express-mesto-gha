@@ -22,6 +22,7 @@ const createUser = (req, res, next) => {
     about,
     avatar,
     email,
+    password,
   } = req.body;
 
   return User.findOne({ email })
@@ -29,7 +30,7 @@ const createUser = (req, res, next) => {
       if (user) {
         return res.status(409).send({ message: 'Пользователь с такой почтой уже существует.' });
       }
-      bcrypt.hash(req.body.password, 10)
+      bcrypt.hash(password, 10)
         .then((hash) => User.create({
           name, about, avatar, email, password: hash,
         }));
