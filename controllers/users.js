@@ -58,9 +58,8 @@ const findUser = (req, res, next) => {
     .catch((errors) => {
       if (errors.name === 'CastError') {
         return next(new BadRequest(`${req.params.userId} не является валидным идентификатором пользователя.`));
-      } else {
-        return next(errors);
       }
+      return next(errors);
     });
 };
 
@@ -103,8 +102,8 @@ const login = (req, res, next) => {
       // вернём токен
       res.send({ token });
     })
-    .catch((err) => {
-      return next(new UnauthorizedError('Необходима авторизация.'))
+    .catch(() => {
+      next(new UnauthorizedError('Необходима авторизация.'));
     })
     .catch(next);
 };
