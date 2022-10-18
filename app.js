@@ -13,6 +13,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
+const {
+  ObjectNotFound,
+} = require('../Components/ObjectNotFound');
+
 app.use('/', require('./routes/index'));
 
 app.use(auth);
@@ -22,9 +26,9 @@ app.use('/', require('./routes/cards'));
 
 app.use(errors());
 
-app.use('/*', (req, res) => {
-  res.status(404).send({ message: 'Запрашиваемый путь не существует.' });
-});
+// app.use('/*', (req, res) => {
+//   res.status(404).send({ message: 'Запрашиваемый путь не существует.' });
+// });
 
 app.use((err, req, res, next) => {
   // если у ошибки нет статуса, выставляем 500
@@ -37,7 +41,7 @@ app.use((err, req, res, next) => {
       : message,
   });
 
-  next();
+  next(new ObjectNotFound('Запрашиваемый путь не существует.'));
 });
 
 app.listen(PORT, () => {
