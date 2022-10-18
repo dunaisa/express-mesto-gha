@@ -44,10 +44,9 @@ const createUser = (req, res, next) => {
       if (errors.code === 11000) {
         next(new ConflictError('Пользователь с такой почтой уже существует.'));
       } else if (errors.name === 'ValidationError') {
-        next(new BadRequest('Некорректные данные при создании карточки.'));
-      } else {
-        return next(errors);
+        return next(new BadRequest('Некорректные данные при создании карточки.'));
       }
+      return next(errors);
     });
 };
 
@@ -58,10 +57,9 @@ const findUser = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((errors) => {
       if (errors.name === 'CastError') {
-        next(new BadRequest(`${req.params.userId} не является валидным идентификатором пользователя.`));
-      } else {
-        return next(errors);
+        return next(new BadRequest(`${req.params.userId} не является валидным идентификатором пользователя.`));
       }
+      return next(errors);
     });
 };
 
@@ -73,7 +71,7 @@ const updateUserInfo = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((errors) => {
       if (errors.name === 'ValidationError') {
-        next(new BadRequest('Переданы некорректные данные.'));
+        return next(new BadRequest('Переданы некорректные данные.'));
       }
       return next(errors);
     });
@@ -87,7 +85,7 @@ const updateUserAvatar = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((errors) => {
       if (errors.name === 'ValidationError') {
-        next(new BadRequest('Переданы некорректные данные.'));
+        return next(new BadRequest('Переданы некорректные данные.'));
       }
       return next(errors);
     });
@@ -104,9 +102,7 @@ const login = (req, res, next) => {
       // вернём токен
       res.send({ token });
     })
-    .catch((err) => {
-      next(new UnauthorizedError('Необходима авторизация.'))
-    })
+    .catch(next(new UnauthorizedError('Необходима авторизация.')))
     .catch(next);
 };
 

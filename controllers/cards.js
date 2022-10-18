@@ -27,10 +27,9 @@ const createCard = (req, res, next) => {
     .then((card) => res.send({ data: card }))
     .catch((errors) => {
       if (errors.name === 'ValidationError') {
-        next(new BadRequest('Некорректные данные при создании карточки.'));
-      } else {
-        return next(errors);
+        return next(new BadRequest('Некорректные данные при создании карточки.'));
       }
+      return next(errors);
     });
 };
 
@@ -53,10 +52,9 @@ const deleteCard = (req, res, next) => {
     })
     .catch((errors) => {
       if (errors.name === 'CastError') {
-        next(new BadRequest(`${req.params.cardId} не является валидным идентификатором карточки.`));
-      } else {
-        return next(errors);
+        return next(new BadRequest(`${req.params.cardId} не является валидным идентификатором карточки.`));
       }
+      return next(errors);
     });
 };
 
@@ -73,10 +71,9 @@ const likeCard = (req, res, next) => {
     .then((card) => res.send({ data: card }))
     .catch((errors) => {
       if (errors.name === 'CastError') {
-        next(new BadRequest(`${req.params.cardId} не является валидным идентификатором карточки.`));
-      } else {
-        return next(errors);
+        return next(new BadRequest(`${req.params.cardId} не является валидным идентификатором карточки.`));
       }
+      return next(errors);
     });
   // .catch(next);
 };
@@ -94,10 +91,9 @@ const dislikeCard = (req, res, next) => {
     .then((card) => res.send({ data: card }))
     .catch((errors) => {
       if (errors.name === 'CastError') {
-        next(new BadRequest(`${req.params.cardId} не является валидным идентификатором карточки.`));
-      } else {
-        return next(errors);
+        return next(new BadRequest(`${req.params.cardId} не является валидным идентификатором карточки.`));
       }
+      return next(errors);
     });
 };
 
