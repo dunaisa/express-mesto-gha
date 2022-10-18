@@ -25,7 +25,13 @@ const createCard = (req, res, next) => {
   const { _id } = req.user;
   Card.create({ name, link, owner: _id })
     .then((card) => res.send({ data: card }))
-    .catch(next);
+    .catch((errors) => {
+      if (errors.name === 'ValidationError') {
+        next(new BadRequest('Некорректные данные при создании карточки.'));
+      } else {
+        return next(errors);
+      }
+    });
 };
 
 // Удаление карточки по id
@@ -38,7 +44,8 @@ const deleteCard = (req, res, next) => {
       if (card) {
         if (card.owner.toString() === ownerId) {
           card.delete()
-            .then(() => res.send({ data: card }));
+            .then(() => res.send({ data: card }))
+            .catch(next);
         } else {
           next(new ForbiddenError(`Карточка с указанным id ${req.params.cardId} принадлежит другому пользователю.`));
         }
@@ -46,9 +53,9 @@ const deleteCard = (req, res, next) => {
     })
     .catch((errors) => {
       if (errors.name === 'CastError') {
-        throw new BadRequest(`${req.params.cardId} не является валидным идентификатором карточки.`);
+        next(new BadRequest(`${req.params.cardId} не является валидным идентификатором карточки.`));
       } else {
-        return next();
+        return next(errors);
       }
     });
 };
@@ -66,9 +73,9 @@ const likeCard = (req, res, next) => {
     .then((card) => res.send({ data: card }))
     .catch((errors) => {
       if (errors.name === 'CastError') {
-        throw new BadRequest(`${req.params.cardId} не является валидным идентификатором карточки.`);
+        next(new BadRequest(`${req.params.cardId} не является валидным идентификатором карточки.`));
       } else {
-        return next();
+        return next(errors);
       }
     });
   // .catch(next);
@@ -87,12 +94,11 @@ const dislikeCard = (req, res, next) => {
     .then((card) => res.send({ data: card }))
     .catch((errors) => {
       if (errors.name === 'CastError') {
-        throw new BadRequest(`${req.params.cardId} не является валидным идентификатором карточки.`);
+        next(new BadRequest(`${req.params.cardId} не является валидным идентификатором карточки.`));
       } else {
-        return next();
+        return next(errors);
       }
     });
-  // .catch(next);
 };
 
 module.exports = {
