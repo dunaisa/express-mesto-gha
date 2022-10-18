@@ -43,11 +43,10 @@ const createUser = (req, res, next) => {
     .catch((errors) => {
       if (errors.code === 11000) {
         return next(new ConflictError('Пользователь с такой почтой уже существует.'));
-      } else if (errors.name === 'ValidationError') {
+      } if (errors.name === 'ValidationError') {
         return next(new BadRequest('Некорректные данные при создании карточки.'));
-      } else {
-        return next(errors);
       }
+      return next(errors);
     });
 };
 
