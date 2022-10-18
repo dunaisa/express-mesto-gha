@@ -42,11 +42,12 @@ const createUser = (req, res, next) => {
     .then((data) => res.send(data))
     .catch((errors) => {
       if (errors.code === 11000) {
-        next(new ConflictError('Пользователь с такой почтой уже существует.'));
+        return next(new ConflictError('Пользователь с такой почтой уже существует.'));
       } else if (errors.name === 'ValidationError') {
         return next(new BadRequest('Некорректные данные при создании карточки.'));
+      } else {
+        return next(errors);
       }
-      return next(errors);
     });
 };
 
@@ -58,8 +59,9 @@ const findUser = (req, res, next) => {
     .catch((errors) => {
       if (errors.name === 'CastError') {
         return next(new BadRequest(`${req.params.userId} не является валидным идентификатором пользователя.`));
+      } else {
+        return next(errors);
       }
-      return next(errors);
     });
 };
 
@@ -102,7 +104,9 @@ const login = (req, res, next) => {
       // вернём токен
       res.send({ token });
     })
-    .catch(next(new UnauthorizedError('Необходима авторизация.')))
+    .catch((err) => {
+      return next(new UnauthorizedError('Необходима авторизация.'))
+    })
     .catch(next);
 };
 
